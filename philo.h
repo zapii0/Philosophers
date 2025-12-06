@@ -6,7 +6,7 @@
 /*   By: mzapora <mzapora@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 23:45:34 by mzapora           #+#    #+#             */
-/*   Updated: 2025/12/06 00:12:53 by mzapora          ###   ########.fr       */
+/*   Updated: 2025/12/06 02:35:54 by mzapora          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 # define PHILO_H
 
 # include <pthread.h>
+# include <stdlib.h>
 
 typedef struct s_fork
 {
 	int	fork_id;
-	pthread_mutex_t fork_mutex;
+	pthread_mutex_t *fork_mutex;
 } t_fork;
 
 typedef struct s_philo
@@ -31,11 +32,17 @@ typedef struct s_philo
 	t_fork		*right_fork;
 }	t_philo;
 
-typedef struct t_data
+typedef struct s_data
 {
 	t_philo	*philo;
-	int		num_philo
+	int		num_philo;
+	t_fork	*forks;
 	
-}
+} t_data;
+//	parsing.c
+t_data	*parser(int ac, char **av, t_data *data);
 
-# endif
+//	utils.c
+int	ft_atoi(const char *nptr);
+
+#endif

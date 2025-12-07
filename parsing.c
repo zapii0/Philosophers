@@ -6,11 +6,13 @@
 /*   By: mzapora <mzapora@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 01:01:25 by mzapora           #+#    #+#             */
-/*   Updated: 2025/12/06 02:38:26 by mzapora          ###   ########.fr       */
+/*   Updated: 2025/12/07 01:18:46 by mzapora          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	*routine(void);
 
 t_data	*parser(int ac, char **av, t_data *data)
 {
@@ -34,16 +36,55 @@ t_data	*parser(int ac, char **av, t_data *data)
 			data->philo[i].num_of_eat = ft_atoi(av[5]);
 		i++;
 	}
-	i = mutex_init(data);
+	i = mutex_pthread_init(data);
 	if (i == -1)
 		return (NULL);
 	return (data);
 }
 
-int	mutex_init(t_data *data)
+int	mutex_pthread_init(t_data *data)
 {
+	int i;
+
+	i = 0;
 	data->forks = malloc(sizeof(t_fork) * data->num_philo);
 	if (!data->forks)
 		return (-1);
-	
+	while (i < data->num_philo)
+	{
+		data->forks[i].fork_id = i + 1;
+		pthread_mutex_init(&data->forks[i].fork_mutex, NULL);
+		pthread_create(&data->philo[i].philosopher, NULL, (void *)routine, NULL);
+		i++;
+	}
+	i = 0;
+	while (i <data->num_philo)
+	{
+		pthread_join(data->philo[i].philosopher, NULL);
+		i++;
+	}
+	fork_set(data);
+	return (0);
+}
+
+void	fork_set(t_data *data)
+{
+	int i;
+
+	i = 1;
+	data->philo[0].right_fork = &data->forks[data->num_philo - 1];
+	data->philo[0].left_fork = &data->forks[0];
+	while (i < data->num_philo)
+	{
+		data->philo[i].left_fork = &data->forks[i];
+		data->philo[i].right_fork = &data->forks[i - 1];
+		i++;
+	}
+	return ;
+}
+
+void	*routine(void)
+{
+	printf("thread sie tworzy\n");
+	return (NULL);
 }
